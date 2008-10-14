@@ -67,6 +67,19 @@ module AWS
           url << "?#{query_string}" if authenticate
         end
       end
+
+      def virtual_hosting_url_for(virtual_hosting_domain, path, options = {})
+        authenticate = options.delete(:authenticated)
+        # Default to true unless explicitly false
+        authenticate = true if authenticate.nil? 
+        path         = self.class.prepare_path(path)
+        request      = request_method(:get).new(path, {})
+        options[:virtual_hosting_domain] = virtual_hosting_domain
+        query_string = query_string_authentication(request, options)
+        returning "#{protocol(options)}#{virtual_hosting_domain}#{port_string}#{path}" do |url|
+          url << "?#{query_string}" if authenticate
+        end
+      end
       
       def subdomain
         http.address[/^([^.]+).#{DEFAULT_HOST}$/, 1]

@@ -63,6 +63,7 @@ module AWS
           def canonical_string            
             options = {}
             options[:expires] = expires if expires?
+            options[:virtual_hosting_domain] = @options[:virtual_hosting_domain]
             CanonicalString.new(request, options)
           end
           memoized :canonical_string
@@ -213,7 +214,11 @@ module AWS
           end
           
           def only_path
-            request.path[/^[^?]*/]
+            result = if @options[:virtual_hosting_domain]
+              '/' + File.join( @options[:virtual_hosting_domain], request.path[/^[^?]*/])
+            else
+              request.path[/^[^?]*/]
+            end
           end
       end
     end

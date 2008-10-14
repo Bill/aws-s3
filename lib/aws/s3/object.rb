@@ -290,6 +290,10 @@ module AWS
         def url_for(name, bucket = nil, options = {})
           connection.url_for(path!(bucket, name, options), options) # Do not normalize options
         end
+
+        def virtual_hosting_url_for( virtual_hosting_domain, name, bucket=nil, options={})
+          connection.virtual_hosting_url_for( virtual_hosting_domain, "/#{name}", options) # Do not normalize options
+        end
         
         def path!(bucket, name, options = {}) #:nodoc:
           # We're using the second argument for options

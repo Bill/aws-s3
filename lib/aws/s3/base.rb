@@ -68,7 +68,6 @@ module AWS #:nodoc:
           process_options!(options, verb)
           response = response_class.new(connection.request(verb, path, options, body, attempts, &block))
           Service.response = response
-
           Error::Response.new(response.response).error.raise if response.error?
           response
         # Once in a while, a request to S3 returns an internal error. A glitch in the matrix I presume. Since these 
