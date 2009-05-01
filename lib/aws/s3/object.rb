@@ -291,8 +291,18 @@ module AWS
           connection.url_for(path!(bucket, name, options), options) # Do not normalize options
         end
 
-        def virtual_hosting_url_for( virtual_hosting_domain, name, bucket=nil, options={})
-          connection.virtual_hosting_url_for( virtual_hosting_domain, "/#{name}", options) # Do not normalize options
+        # Same as <tt>url_for</tt> but this works when S3 Virtual Hosting of Buckets is in effect.
+        # Provide an object name and a virtual hosting domain like this:
+        #
+        #   S3Object.virtual_hosting_url_for( 'beluga_baby.jpg', 'foo.bar.com' )
+        #
+        # If you are hosting at images.mydomain.com then pass 'images.mydomain.com' as the virtual_hosting_domain.
+        # Be sure to configure a CNAME mapping on the mydomain.com domain from "images" to "images.mydomain.com.s3.amazonaws.com."
+        # Notice that final dot. It's important!
+        #
+        # More information at http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?VirtualHosting.html
+        def virtual_hosting_url_for( name, virtual_hosting_domain, options={})
+          connection.virtual_hosting_url_for( "/#{name}", virtual_hosting_domain, options) # Do not normalize options
         end
         
         def path!(bucket, name, options = {}) #:nodoc:

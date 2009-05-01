@@ -363,6 +363,30 @@ class RemoteS3ObjectTest < Test::Unit::TestCase
     end
   end
   
+  def test_virtual_hosting_url
+    key = 'images/face'
+    value = 'a good looking face'
+    
+    assert_nothing_raised do
+      S3Object.store(key, value, TEST_VIRTUAL_HOSTING_BUCKET)
+    end
+    
+    object = nil
+    assert_nothing_raised do
+      object = S3Object.find(key, TEST_VIRTUAL_HOSTING_BUCKET)
+    end
+
+    assert object
+    assert_equal object.value, value
+    
+    url = nil
+    assert_nothing_raised do
+      url = S3Object.virtual_hosting_url_for(key, TEST_VIRTUAL_HOSTING_BUCKET)
+    end
+    assert url
+    assert_equal object.value, fetch_object_at(url).body
+  end
+  
   private
     def fetch_object_at(url)
       Net::HTTP.get_response(URI.parse(url))
