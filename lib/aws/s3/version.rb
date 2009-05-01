@@ -2,8 +2,8 @@ module AWS
   module S3
     module VERSION #:nodoc:
       MAJOR    = '0'
-      MINOR    = '5'
-      TINY     = '1' 
+      MINOR    = '6'
+      TINY     = '2' 
       BETA     = Time.now.to_i.to_s
     end
     

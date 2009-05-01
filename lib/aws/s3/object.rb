@@ -168,7 +168,7 @@ module AWS
           
           # We need to ensure the key doesn't have extended characters but not uri escape it before doing the lookup and comparing since if the object exists, 
           # the key on S3 will have been normalized
-          key    = key.remove_extended unless key.utf8?
+          key    = key.remove_extended unless key.valid_utf8?
           bucket = Bucket.find(bucket_name(bucket), :marker => key.previous, :max_keys => 1)
           # If our heuristic failed, trigger a NoSuchKey exception
           if (object = bucket.objects.first) && object.key == key
@@ -489,7 +489,7 @@ module AWS
           reload  = options
           options = {}
         end
-        memoize(reload) do
+        expirable_memoize(reload) do
           self.class.stream(key, bucket.name, options, &block)
         end
       end
@@ -565,7 +565,7 @@ module AWS
       
       def etag(reload = false)
         return nil unless stored?
-        memoize(reload) do
+        expirable_memoize(reload) do
           reload ? about(reload)['etag'][1...-1] : attributes['e_tag'][1...-1]
         end
       end
